@@ -8,7 +8,8 @@ function App() {
       {/* Task 1 */}
       <h1>Welcome to React</h1>
       <p>Learning Day 1</p>
-
+  
+  
       {/* Task 2 */}
       <h1>Hello {name}</h1>
 
