@@ -1,0 +1,575 @@
+/* ============================================================
+   src/app/globals.css  —  ALL STYLES FOR THE APP
+   ============================================================ */
+
+/* LINE 1: Import a distinctive Google Font pair.
+   "DM Serif Display" → elegant serif for headings
+   "DM Sans"          → clean sans-serif for body text       */
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+/* LINE 2: CSS custom properties (variables) — define the
+   color palette and design tokens in one place.
+   Change a value here → it updates everywhere it's used.    */
+:root {
+  --bg-primary:     #0a0a0f;      /* very dark navy background  */
+  --bg-card:        #12121a;      /* slightly lighter card bg   */
+  --bg-form:        #1a1a28;      /* form container background  */
+  --bg-input:       #0f0f1a;      /* input field background     */
+  --accent-1:       #7c5cfc;      /* main purple accent         */
+  --accent-2:       #fc5c7d;      /* pink/rose secondary accent */
+  --accent-glow:    rgba(124,92,252,0.3); /* purple glow effect */
+  --text-primary:   #f0f0ff;      /* near-white text            */
+  --text-secondary: #8888aa;      /* muted grey-purple text     */
+  --border-color:   rgba(124,92,252,0.2); /* subtle purple border */
+  --card-shadow:    0 8px 32px rgba(0,0,0,0.4);
+  --font-heading:   'DM Serif Display', serif;
+  --font-body:      'DM Sans', sans-serif;
+  --radius-sm:      8px;
+  --radius-md:      16px;
+  --radius-lg:      24px;
+  --transition:     all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* LINE 3: Global reset — remove default browser margins,
+   set box-sizing so padding is included in width,
+   and apply our font and dark background everywhere.         */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* LINE 4: Base body styles                                   */
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  /* Subtle dot-grid background texture for depth */
+  background-image: radial-gradient(
+    circle,
+    rgba(124,92,252,0.08) 1px,
+    transparent 1px
+  );
+  background-size: 32px 32px;
+}
+
+/* ============================================================
+   PAGE WRAPPER — outermost container
+   ============================================================ */
+
+/* LINE 5: Full-page flex column layout — stacks Header,
+   main content, and footer vertically.                       */
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ============================================================
+   HEADER COMPONENT STYLES
+   ============================================================ */
+
+/* LINE 6: The fixed top header bar.
+   position: sticky keeps it at top when scrolling.           */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 40px;
+  background: rgba(10, 10, 15, 0.85);
+  backdrop-filter: blur(20px);              /* frosted glass effect */
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+}
+
+/* LINE 7: The circular logo badge on the left.               */
+.header-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+
+/* LINE 8: The main H1 title in the header.                   */
+.header-title {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+  flex: 1;                   /* takes up remaining space       */
+}
+
+/* LINE 9: The version badge on the right side.               */
+.header-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.1em;
+}
+
+/* ============================================================
+   MAIN CONTENT — centered container
+   ============================================================ */
+
+/* LINE 10: The main area — centered, max-width, with padding.
+    flex: 1 makes it stretch to fill available height.        */
+.main-content {
+  flex: 1;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ============================================================
+   USERFORM COMPONENT STYLES
+   ============================================================ */
+
+/* LINE 11: The form's outer container — card-style box.      */
+.form-container {
+  background: var(--bg-form);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  box-shadow: var(--card-shadow);
+}
+
+/* LINE 12: "ADD NEW USER" label above inputs.                */
+.form-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--accent-1);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+}
+
+/* LINE 13: Row that holds inputs and button side by side.    */
+.form-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;     /* wraps to new line on small screens  */
+}
+
+/* LINE 14: Shared style for both text and number inputs.     */
+.form-input {
+  flex: 1;
+  min-width: 160px;
+  padding: 14px 18px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 15px;
+  outline: none;
+  transition: var(--transition);
+}
+
+/* LINE 15: Input focus state — glowing purple border.        */
+.form-input:focus {
+  border-color: var(--accent-1);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+/* LINE 16: Placeholder text color.                           */
+.form-input::placeholder {
+  color: var(--text-secondary);
+}
+
+/* LINE 17: Age input is narrower since it's a short number.  */
+.form-input-age {
+  flex: 0 0 120px;
+  min-width: 100px;
+}
+
+/* LINE 18: The "Add User" button.                            */
+.btn-add {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  border: none;
+  border-radius: var(--radius-sm);
+  color: white;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+  box-shadow: 0 4px 20px var(--accent-glow);
+}
+
+/* LINE 19: Hover state — lift the button slightly.           */
+.btn-add:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px var(--accent-glow);
+}
+
+/* LINE 20: Active/pressed state — push button down.          */
+.btn-add:active {
+  transform: translateY(0);
+}
+
+/* LINE 21: The large "+" icon inside the Add button.         */
+.btn-add-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* LINE 22: Error message shown below the form row.           */
+.form-error {
+  margin-top: 12px;
+  color: var(--accent-2);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 14px;
+  background: rgba(252, 92, 125, 0.1);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(252, 92, 125, 0.2);
+}
+
+/* ============================================================
+   CONTROLS BAR — count + toggle button row
+   ============================================================ */
+
+/* LINE 23: Flex row — count on left, button on right.        */
+.controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* LINE 24: The user count display.                           */
+.user-count {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+/* LINE 25: The big number (e.g. "3").                        */
+.count-number {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  color: var(--accent-1);
+  line-height: 1;
+}
+
+/* LINE 26: The label next to the number ("Users Registered") */
+.count-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+/* LINE 27: Base toggle button style.                         */
+.btn-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 50px;         /* pill shape                  */
+  border: 1px solid var(--border-color);
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  letter-spacing: 0.05em;
+}
+
+/* LINE 28: "Hide Users" button — purple filled style.        */
+.btn-toggle-hide {
+  color: var(--accent-1);
+  border-color: var(--accent-1);
+  background: rgba(124, 92, 252, 0.1);
+}
+
+/* LINE 29: "Show Users" button — grey outlined style.        */
+.btn-toggle-show {
+  color: var(--text-secondary);
+}
+
+/* LINE 30: Toggle hover effect.                              */
+.btn-toggle:hover {
+  transform: translateY(-1px);
+  border-color: var(--accent-1);
+  color: var(--accent-1);
+  background: rgba(124, 92, 252, 0.1);
+}
+
+/* ============================================================
+   EMPTY STATE — shown when no users exist
+   ============================================================ */
+
+/* LINE 31: Centered empty state container.                   */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.4;
+}
+
+.empty-title {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.empty-sub {
+  font-size: 13px;
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+/* ============================================================
+   CARDS GRID — layout of UserCard components
+   ============================================================ */
+
+/* LINE 32: Responsive grid — auto-fills columns.
+   repeat(auto-fill, minmax(250px, 1fr)):
+   → Create as many columns as fit
+   → Each column is minimum 250px, maximum equal share        */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+/* ============================================================
+   USERCARD COMPONENT STYLES
+   ============================================================ */
+
+/* LINE 33: Individual card container.
+   position:relative needed for pseudo-element glow effects.  */
+.user-card {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 28px 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: var(--card-shadow);
+  transition: var(--transition);
+  overflow: hidden;
+}
+
+/* LINE 34: Card hover — lift and glow.                       */
+.user-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(124, 92, 252, 0.4);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(124,92,252,0.1);
+}
+
+/* LINE 35: Glowing top edge on hover (pseudo-element).       */
+.user-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent-1), transparent);
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.user-card:hover::before {
+  opacity: 1;
+}
+
+/* LINE 36: Top section — avatar + name.                      */
+.card-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+/* LINE 37: Avatar circle with initials.                      */
+.card-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: 22px;
+  color: white;
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+/* LINE 38: User name text.                                   */
+.card-name {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+/* LINE 39: Info section container.                           */
+.card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  background: rgba(255,255,255,0.02);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255,255,255,0.04);
+}
+
+/* LINE 40: A single info row (label + value side by side).   */
+.card-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* LINE 41: Label text (e.g. "AGE", "STATUS").                */
+.card-info-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+/* LINE 42: Value text (e.g. "25 yrs").                       */
+.card-info-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* LINE 43: Thin horizontal divider between rows.             */
+.card-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.05);
+}
+
+/* LINE 44: "Active" status badge.                            */
+.card-status-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 20px;
+  background: rgba(78, 205, 196, 0.15);
+  color: #4ecdc4;
+  border: 1px solid rgba(78, 205, 196, 0.3);
+}
+
+/* LINE 45: Delete button at bottom of each card.             */
+.btn-delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px;
+  background: transparent;
+  border: 1px solid rgba(252, 92, 125, 0.2);
+  border-radius: var(--radius-sm);
+  color: rgba(252, 92, 125, 0.6);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: var(--transition);
+  width: 100%;
+}
+
+/* LINE 46: Delete button hover — fills with red/pink color.  */
+.btn-delete:hover {
+  background: rgba(252, 92, 125, 0.1);
+  border-color: var(--accent-2);
+  color: var(--accent-2);
+  box-shadow: 0 0 12px rgba(252,92,125,0.2);
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+
+.app-footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border-color);
+  opacity: 0.6;
+}
+
+/* ============================================================
+   RESPONSIVE — adjustments for small screens
+   ============================================================ */
+
+/* LINE 47: On screens narrower than 600px, shrink padding
+   and stack the form inputs vertically.                      */
+@media (max-width: 600px) {
+  .app-header {
+    padding: 14px 20px;
+  }
+  .main-content {
+    padding: 24px 16px;
+  }
+  .form-container {
+    padding: 20px 18px;
+  }
+  .form-row {
+    flex-direction: column;
+  }
+  .form-input,
+  .form-input-age,
+  .btn-add {
+    width: 100%;
+    flex: unset;
+  }
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
