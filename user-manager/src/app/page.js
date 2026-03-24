@@ -9,7 +9,7 @@ export default function Home() {
   const [users, setUsers] = useState([]);
   const [showUsers, setShowUsers] = useState(true);
 
-  // Add user
+  // Add user name,ages
   const addUser = (name, age) => {
     const newUser = {
       id: Date.now(),
@@ -20,7 +20,7 @@ export default function Home() {
     setUsers([...users, newUser]);
   };
 
-  // Delete user
+  // Delete user details
   const deleteUser = (id) => {
     const updatedUsers = users.filter((user) => user.id !== id);
     setUsers(updatedUsers);
@@ -28,14 +28,12 @@ export default function Home() {
 
   return (
     <div className="max-w-xl mx-auto mt-10 p-4">
-      
-      {/* Header */}
+
       <Header title="User Manager" />
 
-      {/* Form */}
       <UserForm onAddUser={addUser} />
 
-      {/* Toggle Button */}
+  
       <div className="text-center mb-6">
         <button
           onClick={() => setShowUsers(!showUsers)}
@@ -45,7 +43,6 @@ export default function Home() {
         </button>
       </div>
 
-      {/* User List */}
       {showUsers && (
         <div className="flex flex-col gap-4">
           {users.map((user) => (

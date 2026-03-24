@@ -1,6 +1,6 @@
 "use client";
 
-export default function UserCard({ name, age, onDelete }) {
+function UserCard({ name, age, onDelete }) {
   return (
     <div className="border p-4 rounded shadow-md flex justify-between items-center">
       <div>
@@ -17,3 +17,5 @@ export default function UserCard({ name, age, onDelete }) {
     </div>
   );
 }
+
+export default UserCard
