@@ -1,7 +1,7 @@
 import Image from "next/image";
 import styles from "./page.module.css";
  export default function Home() {
-   const name='Subash'
+   const name='Prakash'
   const skills=['Html','css','js']
   return (
   <main style={{ padding: "18rem", fontFamily: "sans-serif",  backgroundColor:'black'}}>
