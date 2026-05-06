@@ -1,19 +1,18 @@
 "use client";
 
-import Header from "@/components/Header";
 import Link from "next/link";
-import { useEffect } from "react";
 
 export default function Home() {
   const users = ["John"];
- 
 
   return (
     <div>
       {users.map((u, i) => (
-        <span key={i}>{u}</span>
+        <div key={i}>
+          <span>{u}</span>
+          <Link href={`/products/${i}`}>View Profile</Link>
+        </div>
       ))}
-      <Link href={`/products/${id}`}>View Profile</Link>
     </div>
   );
 }
