@@ -6,4 +6,4 @@
 export async function GET() {
     return Response.json([{'Name':'Saratha'},{'Name':'Surya'}])
     
-}   //This is a Json data
+}   //This is  a Json data
