@@ -6,7 +6,7 @@ const page = ({name, age, gender}) => {
       <div>Contact Page</div>
       <p>Name: {name}</p>
       <p>Age: {age}</p>
-      <p>Gender: {gender}</p>
+      <p>Gender:  {gender}</p>
     </div>
   )
 }
