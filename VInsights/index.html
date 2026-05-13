@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vinsights – Intelligent AI Solutions for Business</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['DM Sans', 'sans-serif'],
+          display: ['Syne', 'sans-serif'],
+        },
+        colors: {
+          dark: '#0d0b14',
+          card: '#13101f',
+          purple: { DEFAULT: '#7c3aed', light: '#a855f7', dark: '#5b21b6' },
+          orange: '#f97316',
+          pink: '#ec4899',
+        },
+      },
+    },
+  };
+</script>
+<style>
+  :root {
+    --purple: #7c3aed;
+    --purple-light: #a855f7;
+    --orange: #f97316;
+    --pink: #ec4899;
+    --dark: #0d0b14;
+    --card: #13101f;
+    --border: rgba(255,255,255,0.07);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--dark); color: #fff; font-family: 'DM Sans', sans-serif; overflow-x: hidden; }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999; opacity: 0.4;
+  }
+
+  /* GLOW */
+  .glow-purple { box-shadow: 0 0 60px rgba(124,58,237,0.3); }
+  .glow-text { background: linear-gradient(135deg, var(--purple-light), var(--orange)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .glow-text-pink { background: linear-gradient(135deg, var(--purple-light), var(--pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+  /* NAV */
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; backdrop-filter: blur(12px); background: rgba(13,11,20,0.8); border-bottom: 1px solid var(--border); }
+
+  /* HERO */
+  .hero-bg {
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(124,58,237,0.25) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 80% 60%, rgba(224, 107, 24, 0.08) 0%, transparent 60%);
+  }
+
+  /* ANIMATED GRADIENT BG PILL */
+  .badge { background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.4); border-radius: 999px; padding: 4px 14px; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; }
+  .badge::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 8px #4ade80; display: block; animation: pulse-green 2s infinite; }
+  @keyframes pulse-green { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.7;transform:scale(1.3)} }
+
+  /* CHAT WIDGET */
+  .chat-box { background: rgba(30,22,50,0.9); border: 1px solid rgba(124,58,237,0.3); border-radius: 20px; backdrop-filter: blur(20px); box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(124,58,237,0.1); }
+  .chat-bubble-ai { background: rgba(124,58,237,0.25); border: 1px solid rgba(124,58,237,0.2); border-radius: 14px 14px 14px 4px; padding: 10px 14px; font-size: 13px; max-width: 75%; }
+  .chat-bubble-user { background: rgba(255,255,255,0.07); border-radius: 14px 14px 4px 14px; padding: 10px 14px; font-size: 13px; max-width: 75%; margin-left: auto; }
+  .typing-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--purple-light); animation: typing 1.2s infinite; }
+  .typing-dot:nth-child(2){animation-delay:.2s}.typing-dot:nth-child(3){animation-delay:.4s}
+  @keyframes typing{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-4px)}}
+
+  /* STATS */
+  .stat-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 16px; }
+
+  /* MARQUEE */
+  .marquee-track { animation: marquee 20s linear infinite; display: flex; gap: 60px; white-space: nowrap; }
+  @keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+  /* SERVICE CARDS */
+  .service-card { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 20px; transition: all 0.35s; position: relative; overflow: hidden; }
+  .service-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(124,58,237,0.12), transparent); opacity: 0; transition: opacity 0.35s; border-radius: 20px; }
+  .service-card:hover::before { opacity: 1; }
+  .service-card:hover { border-color: rgba(124,58,237,0.4); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(124,58,237,0.15); }
+
+  /* ICON BOX */
+  .icon-box { width: 44px; height: 44px; border-radius: 12px; background: rgba(124,58,237,0.2); border: 1px solid rgba(124,58,237,0.3); display: flex; align-items: center; justify-content: center; }
+
+  /* SECTION BG PURPLE */
+  .section-purple { background: linear-gradient(135deg, #4f1fbf 0%, #7c3aed 50%, #a855f7 100%); }
+
+  /* TESTIMONIAL */
+  .testi-card { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 20px; transition: all 0.3s; }
+  .testi-card:hover { border-color: rgba(124,58,237,0.4); transform: translateY(-3px); }
+
+  /* PROCESS STEP */
+  .process-step { background: var(--card); border: 1px solid var(--border); border-radius: 20px; position: relative; }
+  .process-connector { position: absolute; top: 28px; left: calc(100% + 1px); width: calc(100% - 2px); height: 2px; background: linear-gradient(90deg, rgba(124,58,237,0.6), rgba(168,85,247,0.2)); }
+
+  /* PRICING */
+  .price-card { border-radius: 24px; transition: all 0.35s; }
+  .price-card.popular { background: linear-gradient(135deg, #5b21b6, #7c3aed); border: 2px solid rgba(168,85,247,0.5); box-shadow: 0 0 80px rgba(124,58,237,0.4); transform: scale(1.03); }
+  .price-card.regular { background: var(--card); border: 1px solid var(--border); }
+  .price-card:hover { transform: translateY(-6px) scale(1.02); }
+  .price-card.popular:hover { transform: translateY(-6px) scale(1.05); }
+
+  /* FAQ */
+  .faq-item { border-bottom: 1px solid var(--border); }
+  .faq-btn { width: 100%; text-align: left; padding: 20px 0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: none; border: none; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 16px; }
+  .faq-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s; color: rgba(255,255,255,0.6); font-size: 14px; line-height: 1.7; }
+  .faq-content.open { max-height: 200px; padding-bottom: 18px; }
+  .faq-icon { width: 28px; height: 28px; border-radius: 50%; background: rgba(124,58,237,0.2); border: 1px solid rgba(124,58,237,0.3); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: transform 0.3s, background 0.3s; }
+  .faq-icon.open { transform: rotate(45deg); background: rgba(124,58,237,0.5); }
+
+  /* WHY CHOOSE */
+  .why-card { background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(168,85,247,0.05)); border: 1px solid rgba(124,58,237,0.25); border-radius: 24px; }
+
+  /* CONTACT FORM */
+  .form-input { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px; color: #fff; font-size: 14px; width: 100%; font-family: 'DM Sans', sans-serif; transition: border-color 0.2s; outline: none; }
+  .form-input:focus { border-color: rgba(124,58,237,0.5); }
+  .form-input::placeholder { color: rgba(255,255,255,0.3); }
+
+  /* BTN */
+  .btn-primary { background: linear-gradient(135deg, var(--purple), var(--purple-light)); border: none; border-radius: 10px; color: #fff; font-family: 'DM Sans', sans-serif; font-weight: 500; cursor: pointer; transition: all 0.25s; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(124,58,237,0.4); }
+  .btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: #fff; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.25s; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-outline:hover { border-color: rgba(124,58,237,0.5); background: rgba(124,58,237,0.1); }
+
+  /* TOOL ITEM */
+  .tool-item { display: flex; gap: 14px; align-items: flex-start; padding: 16px; border-radius: 14px; transition: background 0.25s; }
+  .tool-item:hover { background: rgba(255,255,255,0.04); }
+
+  /* VERTICAL CARD */
+  .vertical-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 16px; padding: 20px; transition: all 0.3s; }
+  .vertical-card:hover { border-color: rgba(124,58,237,0.3); background: rgba(124,58,237,0.05); }
+
+  /* COUNTER */
+  .stat-num { font-family: 'Syne', sans-serif; font-weight: 800; }
+
+  /* SCROLL FADE */
+  .fade-up { opacity: 0; transform: translateY(40px); }
+  .fade-left { opacity: 0; transform: translateX(-40px); }
+  .fade-right { opacity: 0; transform: translateX(40px); }
+
+  /* FLOATING ORBS */
+  .orb { position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none; }
+
+  /* CHAT ANIMATION */
+  @keyframes slideInLeft { from{opacity:0;transform:translateX(-20px)} to{opacity:1;transform:translateX(0)} }
+  @keyframes slideInRight { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
+  .msg1{animation:slideInLeft 0.5s 0.5s both}
+  .msg2{animation:slideInLeft 0.5s 1.2s both}
+  .msg3{animation:slideInRight 0.5s 2s both}
+  .msg4{animation:slideInLeft 0.5s 2.8s both}
+
+  /* PLAN BADGE */
+  .popular-badge { background: linear-gradient(135deg, var(--orange), var(--pink)); font-size: 11px; font-weight: 600; border-radius: 999px; padding: 3px 10px; }
+
+  /* CHECK */
+  .check { color: #4ade80; }
+  .check-purple { color: var(--purple-light); }
+
+  /* FOOTER */
+  footer { background: #080610; border-top: 1px solid var(--border); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--dark); }
+  ::-webkit-scrollbar-thumb { background: rgba(124,58,237,0.4); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- ==================== NAV ==================== -->
+<nav class="py-4 px-6 md:px-12">
+  <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <div class="flex items-center gap-2 font-display font-700 text-lg">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple to-purple-light flex items-center justify-center text-white text-sm font-bold">V</div>
+      <span>VINSIGHTS</span>
+    </div>
+    <div class="hidden md:flex items-center gap-8 text-sm text-white/70">
+      <a href="#services" class="hover:text-white transition-colors">Services</a>
+      <a href="#about" class="hover:text-white transition-colors">Industries</a>
+      <a href="#pricing" class="hover:text-white transition-colors">Pricing</a>
+      <a href="#faq" class="hover:text-white transition-colors">FAQ</a>
+      <a href="#contact" class="hover:text-white transition-colors">Contact</a>
+    </div>
+    <button class="bg-white text-black bg-hover:btn-primary px-5 py-2.5 rounded-full  text-sm font-medium">Book Appointment →</button>
+  </div>
+</nav>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero-bg min-h-screen flex flex-col justify-center pt-24 pb-16 px-6 md:px-12 relative overflow-hidden">
+  <div class="orb w-96 h-96 bg-purple/30 top-20 left-1/4" style="animation: float 8s ease-in-out infinite;"></div>
+  <div class="orb w-64 h-64 bg-orange/20 bottom-20 right-1/4" style="animation: float 10s ease-in-out infinite 2s;"></div>
+  <style>@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-30px)}}</style>
+
+  <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center w-full">
+    <!-- LEFT -->
+    <div class="fade-left">
+      <div class="badge mb-6 text-white/80">Next-Gen AI Solutions for Enterprise</div>
+      <h1 class="font-display text-5xl md:text-6xl font-bold leading-tight mb-6">
+        Revolutionize Your<br/>Business With<br/>
+        <span class="glow-text">Intelligent AI</span>
+      </h1>
+      <p class="text-white/60 text-lg leading-relaxed mb-8 max-w-md">
+        At Vinsights Solutions, we specialize in building next-generation AI systems that transform how businesses operate, engage, and grow. Our mission is to deliver intelligent, scalable solutions.
+      </p>
+      <div class="flex items-center gap-4 mb-6">
+        <button class="btn-primary px-6 py-3 text-sm font-medium">Contact Us →</button>
+        <button class="btn-outline px-6 py-3 text-sm font-medium">📅 Get a Demo</button>
+      </div>
+      <div class="flex items-center gap-6 text-sm text-white/50">
+        <span class="flex items-center gap-2"><span class="text-green-400">✓</span> Free 14-day trial</span>
+        <span class="flex items-center gap-2"><span class="text-green-400">✓</span> No credit card required</span>
+      </div>
+    </div>
+
+    <!-- RIGHT: CHAT WIDGET -->
+    <div class="fade-right flex justify-center">
+      <div class="chat-box w-full max-w-sm p-5 relative">
+        <div class="absolute -top-3 right-4 bg-dark border border-purple/30 rounded-full px-3 py-1 text-xs text-purple-light flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span> Replies in 0.4s
+        </div>
+        <!-- Header -->
+        <div class="flex items-center gap-3 mb-4 pb-4 border-b border-white/10">
+          <div class="flex gap-1.5"><div class="w-3 h-3 rounded-full bg-red-400"></div><div class="w-3 h-3 rounded-full bg-yellow-400"></div><div class="w-3 h-3 rounded-full bg-green-400"></div></div>
+          <div class="flex items-center gap-2 ml-2">
+            <div class="w-7 h-7 rounded-full bg-gradient-to-br from-purple to-orange flex items-center justify-center text-xs font-bold">A</div>
+            <div>
+              <div class="text-xs font-semibold">AISA-X</div>
+              <div class="text-xs text-green-400">● Online</div>
+            </div>
+          </div>
+        </div>
+        <!-- Messages -->
+        <div class="space-y-3 text-sm">
+          <div class="chat-bubble-user msg1">Hi! Can you check my order #38291?</div>
+          <div class="chat-bubble-ai msg2">Hello Priya 👋 Your order #38291 was dispatched today and will arrive on Friday. Want me to share the tracking link?</div>
+          <div class="chat-bubble-user msg3">Yes please.</div>
+          <div class="chat-bubble-ai msg4">Here you go — tracking link sent to your email. Anything else I can help with?</div>
+        </div>
+        <!-- Input -->
+        <div class="mt-4 flex items-center gap-2 bg-white/5 rounded-xl p-2.5 border border-white/10">
+          <input class="bg-transparent flex-1 text-xs text-white/60 outline-none" placeholder="Type a message..." />
+          <button class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple to-purple-light flex items-center justify-center text-white text-sm">→</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="max-w-7xl mx-auto w-full mt-16 fade-up">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="stat-card p-6 text-center">
+        <div class="stat-num text-4xl font-bold glow-text mb-1" data-target="45">0</div>
+        <div class="w-6 h-1 bg-gradient-to-r from-purple to-orange rounded mx-auto mb-2"></div>
+        <div class="text-xs text-white/50">Visits-to-Lead Improvement</div>
+      </div>
+      <div class="stat-card p-6 text-center">
+        <div class="stat-num text-4xl font-bold glow-text mb-1" data-target="79">0</div>
+        <div class="w-6 h-1 bg-gradient-to-r from-purple to-orange rounded mx-auto mb-2"></div>
+        <div class="text-xs text-white/50">Cost Saving on Support Staff</div>
+      </div>
+      <div class="stat-card p-6 text-center">
+        <div class="stat-num text-4xl font-bold glow-text mb-1" data-target="38">0</div>
+        <div class="w-6 h-1 bg-gradient-to-r from-purple to-orange rounded mx-auto mb-2"></div>
+        <div class="text-xs text-white/50">Efficiency in Lead Capture</div>
+      </div>
+      <div class="stat-card p-6 text-center">
+        <div class="stat-num text-4xl font-bold glow-text mb-1" data-target="42">0</div>
+        <div class="w-6 h-1 bg-gradient-to-r from-purple to-orange rounded mx-auto mb-2"></div>
+        <div class="text-xs text-white/50">Improvement in Revenue</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== MARQUEE ==================== -->
+<div class="py-8 border-y border-white/5 overflow-hidden">
+  <p class="text-center text-xs text-white/40 tracking-widest uppercase mb-5">Trusted by Forward-Thinking Teams</p>
+  <div class="flex">
+    <div class="marquee-track">
+      <span class="text-white/25 text-xl font-display font-semibold">Aurora AI</span>
+      <span class="text-white/25 text-xl font-display font-semibold">BluePeak</span>
+      <span class="text-white/25 text-xl font-display font-semibold">Voltrix</span>
+      <span class="text-white/25 text-xl font-display font-semibold">NorthBay</span>
+      <span class="text-white/25 text-xl font-display font-semibold">Helix Labs</span>
+      <span class="text-white/25 text-xl font-display font-semibold">Quaroltrix</span>
+      <span class="text-white/25 text-xl font-display font-semibold">Borthi Bay</span>
+      <!-- duplicate -->
+      <span class="text-white/25 text-xl font-display font-semibold">Aurora AI</span>
+      <span class="text-white/25 text-xl font-display font-semibold">BluePeak</span>
+      <span class="text-white/25 text-xl font-display font-semibold">Voltrix</span>
+      <span class="text-white/25 text-xl font-display font-semibold">NorthBay</span>
+      <span class="text-white/25 text-xl font-display font-semibold">Helix Labs</span>
+      <span class="text-white/25 text-xl font-display font-semibold">Quaroltrix</span>
+      <span class="text-white/25 text-xl font-display font-semibold">Borthi Bay</span>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SERVICES ==================== -->
+<section id="services" class="section-purple py-24 px-6 md:px-12">
+  <div class="max-w-7xl mx-auto">
+    <p class="text-xs text-white/60 uppercase tracking-widest mb-3">Take Your Business to the Next Level</p>
+    <div class="grid md:grid-cols-3 gap-6 items-start">
+      <div class="fade-left">
+        <h2 class="font-display text-4xl font-bold text-white mb-4">Our Services</h2>
+        <p class="text-white/70 leading-relaxed">We help organisations unlock AI value across the entire stack — from custom model development to continuous optimisation.</p>
+      </div>
+      <div class="service-card p-7 fade-up" style="animation-delay:0.1s">
+        <div class="icon-box mb-5"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-purple-light"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></div>
+        <h3 class="font-display font-700 text-white text-xl mb-3">Tailored AI Model Development</h3>
+        <p class="text-white/60 text-sm leading-relaxed">Vinsights creates tailored AI models specifically designed around your unique business needs, offering precision, scalability, and usability.</p>
+      </div>
+      <div class="service-card p-7 fade-up" style="animation-delay:0.2s">
+        <div class="icon-box mb-5"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-purple-light"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg></div>
+        <h3 class="font-display font-700 text-white text-xl mb-3">Tailored AI Optimization & Continuous Improvement</h3>
+        <p class="text-white/60 text-sm leading-relaxed">Our tailored AI optimization approach involves continuous refinement and scaling of your AI systems, ensuring ongoing accuracy & reliability.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== AI INTEGRATION ==================== -->
+<section class="py-24 px-6 md:px-12 bg-dark">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-16 fade-up">
+      <h2 class="font-display text-4xl md:text-5xl font-bold mb-4">AI Integration & <span class="glow-text">Custom Software</span><br/><span class="glow-text-pink">Solutions</span></h2>
+      <p class="text-white/50 max-w-2xl mx-auto">At Vinsight, we recognise every business has unique AI integration needs. Our custom services seamlessly embed AI into your existing platforms.</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="service-card p-7 fade-up">
+        <div class="icon-box mb-5"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-purple-light"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg></div>
+        <h3 class="font-display font-bold text-white text-lg mb-3">Natural Language Processing</h3>
+        <p class="text-white/60 text-sm leading-relaxed mb-4">Enhance customer interactions through sophisticated NLP agents — seamlessly integrated with your existing CRM, WhatsApp, and support systems.</p>
+        <a href="#" class="text-purple-light text-sm hover:underline flex items-center gap-1">Learn more →</a>
+      </div>
+      <div class="service-card p-7 fade-up" style="animation-delay:0.1s">
+        <div class="icon-box mb-5"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-purple-light"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></div>
+        <h3 class="font-display font-bold text-white text-lg mb-3">AI Implementation Analysis</h3>
+        <p class="text-white/60 text-sm leading-relaxed mb-4">Our dedicated development team evaluates your processes and systems, pinpointing key areas where generative AI can significantly enhance efficiency.</p>
+        <a href="#" class="text-purple-light text-sm hover:underline flex items-center gap-1">Learn more →</a>
+      </div>
+      <div class="service-card p-7 fade-up" style="animation-delay:0.2s">
+        <div class="icon-box mb-5"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-purple-light"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>
+        <h3 class="font-display font-bold text-white text-lg mb-3">Scheduled Strategic Consultation</h3>
+        <p class="text-white/60 text-sm leading-relaxed mb-4">Following the analysis, we arrange a strategic consultation to discuss findings, recommend practical AI solutions and define actionable next steps.</p>
+        <a href="#" class="text-purple-light text-sm hover:underline flex items-center gap-1">Learn more →</a>
+      </div>
+    </div>
+    <div class="text-center mt-10 fade-up">
+      <button class="btn-primary px-8 py-3 text-sm font-medium">View All Services →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== ABOUT ==================== -->
+<section id="about" class="py-24 px-6 md:px-12 bg-dark">
+  <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+    <div class="relative fade-left">
+      <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&q=80" alt="Team" class="rounded-2xl w-full object-cover h-80 md:h-96" />
+      <div class="absolute bottom-4 right-4 bg-dark/90 border border-purple/30 rounded-xl px-4 py-3 backdrop-blur">
+        <div class="text-2xl font-display font-bold glow-text">+86%</div>
+        <div class="text-xs text-white/50">Customer Engagement</div>
+      </div>
+    </div>
+    <div class="fade-right">
+      <p class="text-xs text-white/40 uppercase tracking-widest mb-3">About Us</p>
+      <h2 class="font-display text-4xl font-bold mb-5">Empowering Enterprises with <span class="glow-text">AI Automation</span></h2>
+      <p class="text-white/60 leading-relaxed mb-6">Vinsights Solutions is a forward-thinking technology company focused on building real-world AI products that solve customer engagement, operations and automation challenges. With AISA-X, Vinsights is redefining how businesses interact with customers — intelligently, seamlessly and at scale.</p>
+      <a href="#" class="text-purple-light text-sm flex items-center gap-2 hover:underline">Read our full story →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CONSULTING ==================== -->
+<section class="py-24 px-6 md:px-12 bg-dark">
+  <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+    <div class="fade-left">
+      <p class="text-xs text-white/40 uppercase tracking-widest mb-3">Our Services</p>
+      <h2 class="font-display text-4xl font-bold mb-5">AI Consulting & <span class="glow-text-pink">Strategy Development</span></h2>
+      <p class="text-white/60 leading-relaxed mb-8">At Vinsights, we don't just offer AI solutions — we help you build a strategy around AI. Our AI consulting services guide you through the entire AI adoption process, from identifying areas where AI can make an impact to implementing tools that drive results.</p>
+      <div class="grid grid-cols-2 gap-3 mb-8">
+        <div class="flex items-center gap-2 bg-white/4 rounded-xl px-4 py-3 border border-white/8 text-sm text-white/70"><span class="check-purple">✓</span> Strategic Roadmap</div>
+        <div class="flex items-center gap-2 bg-white/4 rounded-xl px-4 py-3 border border-white/8 text-sm text-white/70"><span class="check-purple">✓</span> ROI Modelling</div>
+        <div class="flex items-center gap-2 bg-white/4 rounded-xl px-4 py-3 border border-white/8 text-sm text-white/70"><span class="check-purple">✓</span> Risk Assessment</div>
+        <div class="flex items-center gap-2 bg-white/4 rounded-xl px-4 py-3 border border-white/8 text-sm text-white/70"><span class="check-purple">✓</span> Team Enablement</div>
+      </div>
+      <a href="#" class="text-purple-light text-sm flex items-center gap-2 hover:underline">Know why we are best →</a>
+    </div>
+    <div class="fade-right">
+      <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=600&q=80" alt="Consulting" class="rounded-2xl w-full object-cover h-80 md:h-96" />
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TESTIMONIALS ==================== -->
+<section class="section-purple py-24 px-6 md:px-12">
+  <div class="max-w-7xl mx-auto text-center">
+    <div class="text-5xl text-white/30 mb-4 font-display">"</div>
+    <h2 class="font-display text-4xl font-bold text-white mb-2">What people are saying…</h2>
+    <p class="text-white/60 mb-12">Read the testimonials of our happy customers</p>
+    <div class="grid md:grid-cols-3 gap-6 text-left">
+      <div class="testi-card p-7 fade-up">
+        <div class="flex gap-1 mb-4">⭐⭐⭐⭐⭐</div>
+        <p class="text-white/80 text-sm leading-relaxed mb-6">"Vinsights' experts seamlessly integrated AI into our CRM workflow. Within a month, our lead qualification rate improved by 40%, and our sales reps saved an average of 10 hours per week."</p>
+        <div>
+          <div class="font-semibold text-white text-sm">Vikram Singh</div>
+          <div class="text-xs text-white/40">Head of Growth, FinEdge</div>
+        </div>
+      </div>
+      <div class="testi-card p-7 fade-up" style="animation-delay:0.15s">
+        <div class="flex gap-1 mb-4">⭐⭐⭐⭐⭐</div>
+        <p class="text-white/80 text-sm leading-relaxed mb-6">"Thanks to Vinsights' tailored AI consulting, we identified high-impact use cases that boosted our operational efficiency by 35% within three months — and their ongoing support helped us scale fast."</p>
+        <div>
+          <div class="font-semibold text-white text-sm">Meera Iyer</div>
+          <div class="text-xs text-white/40">COO, Lumen Health</div>
+        </div>
+      </div>
+      <div class="testi-card p-7 fade-up" style="animation-delay:0.3s">
+        <div class="flex gap-1 mb-4">⭐⭐⭐⭐⭐</div>
+        <p class="text-white/80 text-sm leading-relaxed mb-6">"Working with Vinsights transformed our support experience. Their tailored AI model handled 80% of routine inquiries without human intervention — our team can now focus on high-value tasks."</p>
+        <div>
+          <div class="font-semibold text-white text-sm">Priya Menon</div>
+          <div class="text-xs text-white/40">CX Lead, Nivara Retail</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CONSULTING PROCESS ==================== -->
+<section class="py-24 px-6 md:px-12 bg-dark">
+  <div class="max-w-7xl mx-auto text-center">
+    <h2 class="font-display text-4xl font-bold mb-4">Our <span class="glow-text">Consulting Process</span></h2>
+    <p class="text-white/50 mb-16">Unlock your business's potential with our comprehensive AI solutions</p>
+    <div class="grid md:grid-cols-3 gap-6 relative">
+      <div class="process-step p-8 fade-up">
+        <div class="w-12 h-12 rounded-full bg-purple/20 border border-purple/40 flex items-center justify-center text-purple-light text-lg font-bold font-display mx-auto mb-5">1</div>
+        <h3 class="font-display font-bold text-white text-lg mb-3">AI Readiness Assessment</h3>
+        <p class="text-white/50 text-sm leading-relaxed">We assess your current systems and identify key opportunities where AI can streamline processes and drive sustainable business growth.</p>
+      </div>
+      <div class="process-step p-8 fade-up" style="animation-delay:0.15s">
+        <div class="w-12 h-12 rounded-full bg-purple/20 border border-purple/40 flex items-center justify-center text-purple-light text-lg font-bold font-display mx-auto mb-5">2</div>
+        <h3 class="font-display font-bold text-white text-lg mb-3">Custom AI Roadmap</h3>
+        <p class="text-white/50 text-sm leading-relaxed">Based on your specific needs, we develop a clear, step-by-step plan that details how to effectively integrate AI tools and processes into your business.</p>
+      </div>
+      <div class="process-step p-8 fade-up" style="animation-delay:0.3s">
+        <div class="w-12 h-12 rounded-full bg-purple/20 border border-purple/40 flex items-center justify-center text-purple-light text-lg font-bold font-display mx-auto mb-5">3</div>
+        <h3 class="font-display font-bold text-white text-lg mb-3">Support & Optimisation</h3>
+        <p class="text-white/50 text-sm leading-relaxed">Once deployed, we provide continuous, personalised calibration to ensure your business and AI systems are always running at peak performance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TOOLS & TECHNOLOGIES ==================== -->
+<section class="section-purple py-24 px-6 md:px-12">
+  <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+    <div class="fade-left">
+      <p class="text-xs text-white/60 uppercase tracking-widest mb-3">Powered By</p>
+      <h2 class="font-display text-4xl font-bold text-white mb-8">Our Tools &<br/>Technologies</h2>
+      <div class="space-y-2">
+        <div class="tool-item">
+          <div class="w-10 h-10 rounded-xl bg-yellow-500/20 border border-yellow-500/30 flex items-center justify-center text-yellow-400 flex-shrink-0 text-lg">🐍</div>
+          <div><div class="font-semibold text-white text-sm mb-1">Python & Generative AI</div><div class="text-xs text-white/60">Leveraging open-source frameworks, fine-tuning large language models, and operating embeddings to power advanced AI-driven applications.</div></div>
+        </div>
+        <div class="tool-item">
+          <div class="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 flex-shrink-0 text-lg">💬</div>
+          <div><div class="font-semibold text-white text-sm mb-1">Customer Engagement & Chatbots</div><div class="text-xs text-white/60">Using Python tools for prompt engineering and LLM for delivering context-aware, multi-channel conversational experience.</div></div>
+        </div>
+        <div class="tool-item">
+          <div class="w-10 h-10 rounded-xl bg-orange-500/20 border border-orange-500/30 flex items-center justify-center text-orange-400 flex-shrink-0 text-lg">☁️</div>
+          <div><div class="font-semibold text-white text-sm mb-1">Cloud Infrastructure</div><div class="text-xs text-white/60">GCP, AWS and Azure hybrid cloud for scalable training, storage, serverless functions and real-time model serving strategy.</div></div>
+        </div>
+        <div class="tool-item">
+          <div class="w-10 h-10 rounded-xl bg-green-500/20 border border-green-500/30 flex items-center justify-center text-green-400 flex-shrink-0 text-lg">⚙️</div>
+          <div><div class="font-semibold text-white text-sm mb-1">Development & DevOps</div><div class="text-xs text-white/60">React, Next and FastAPI for rapid app development, plus Git and Docker for source control and deployment.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="fade-right">
+      <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80" alt="Tech" class="rounded-2xl w-full object-cover h-80" />
+    </div>
+  </div>
+</section>
+
+<!-- ==================== VERTICALS ==================== -->
+<section class="py-24 px-6 md:px-12 bg-dark">
+  <div class="max-w-7xl mx-auto text-center">
+    <p class="text-xs text-white/40 uppercase tracking-widest mb-3">Industries We Serve</p>
+    <h2 class="font-display text-4xl font-bold mb-4">Built for every <span class="glow-text">vertical</span></h2>
+    <p class="text-white/50 mb-12">From regulated finance to fast-moving retail: our AI adapts to your domain and scales with your stack.</p>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 fade-up">
+      <div class="vertical-card text-left"><div class="text-2xl mb-3">🔗</div><div class="font-semibold text-sm mb-1">Technology & Communication</div><div class="text-xs text-white/40">AI copilots, dev tools, smart pipelines</div></div>
+      <div class="vertical-card text-left"><div class="text-2xl mb-3">🏭</div><div class="font-semibold text-sm mb-1">Manufacturing</div><div class="text-xs text-white/40">Predictive maintenance & QC</div></div>
+      <div class="vertical-card text-left"><div class="text-2xl mb-3">🏥</div><div class="font-semibold text-sm mb-1">Healthcare & Wellness</div><div class="text-xs text-white/40">Patient triage & medical AI</div></div>
+      <div class="vertical-card text-left"><div class="text-2xl mb-3">🚗</div><div class="font-semibold text-sm mb-1">Automotive</div><div class="text-xs text-white/40">AI copilots & telematics</div></div>
+      <div class="vertical-card text-left"><div class="text-2xl mb-3">🏦</div><div class="font-semibold text-sm mb-1">Finance & Banking</div><div class="text-xs text-white/40">Fraud AI & AI-advisories</div></div>
+      <div class="vertical-card text-left"><div class="text-2xl mb-3">🛒</div><div class="font-semibold text-sm mb-1">E-commerce & Retail</div><div class="text-xs text-white/40">Conversational shopping</div></div>
+      <div class="vertical-card text-left"><div class="text-2xl mb-3">✈️</div><div class="font-semibold text-sm mb-1">Travel & Hospitality</div><div class="text-xs text-white/40">Itinerary & booking agents</div></div>
+      <div class="vertical-card text-left"><div class="text-2xl mb-3">🎬</div><div class="font-semibold text-sm mb-1">Media & Entertainment</div><div class="text-xs text-white/40">Content intelligence & search</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== PRICING ==================== -->
+<section id="pricing" class="py-24 px-6 md:px-12 bg-dark">
+  <div class="max-w-5xl mx-auto text-center">
+    <p class="text-xs text-white/40 uppercase tracking-widest mb-3">Pricing</p>
+    <h2 class="font-display text-4xl font-bold mb-4">Plans that <span class="glow-text">scale with you</span></h2>
+    <p class="text-white/50 mb-16">Transparent pricing — pick a plan, change anytime.</p>
+    <div class="grid md:grid-cols-3 gap-6 items-center">
+      <!-- Starter -->
+      <div class="price-card regular p-8 fade-up text-left">
+        <div class="text-sm text-white/60 mb-2">Starter</div>
+        <div class="font-display text-4xl font-bold text-white mb-1">$1,499<span class="text-lg text-white/40">/mo</span></div>
+        <p class="text-xs text-white/50 mb-6">For teams piloting AI in a single workflow.</p>
+        <ul class="space-y-3 text-sm text-white/70 mb-8">
+          <li class="flex gap-2"><span class="check">✓</span> 1 custom AI workflow</li>
+          <li class="flex gap-2"><span class="check">✓</span> 1&times; 1hr chatbot integration</li>
+          <li class="flex gap-2"><span class="check">✓</span> Small support</li>
+          <li class="flex gap-2"><span class="check">✓</span> 14-day optimization</li>
+        </ul>
+        <button class="btn-outline w-full py-3 text-sm justify-center">Get a pilot →</button>
+      </div>
+      <!-- Growth -->
+      <div class="price-card popular p-8 fade-up relative text-left" style="animation-delay:0.15s">
+        <div class="absolute -top-4 left-1/2 -translate-x-1/2"><span class="popular-badge text-white">MOST POPULAR</span></div>
+        <div class="text-sm text-white/80 mb-2">Growth</div>
+        <div class="font-display text-4xl font-bold text-white mb-1">$4,999<span class="text-lg text-white/60">/mo</span></div>
+        <p class="text-xs text-white/70 mb-6">For scaling teams that need multi-channel AI.</p>
+        <ul class="space-y-3 text-sm text-white/90 mb-8">
+          <li class="flex gap-2"><span class="check">✓</span> Up to 5 AI workflows</li>
+          <li class="flex gap-2"><span class="check">✓</span> Multi-channel chat & voice</li>
+          <li class="flex gap-2"><span class="check">✓</span> CRM & ticketing integrations</li>
+          <li class="flex gap-2"><span class="check">✓</span> Priority support, 99% SLA</li>
+          <li class="flex gap-2"><span class="check">✓</span> Quarterly model training</li>
+        </ul>
+        <button class="btn-primary w-full py-3 text-sm justify-center">Choose Growth →</button>
+      </div>
+      <!-- Enterprise -->
+      <div class="price-card regular p-8 fade-up text-left" style="animation-delay:0.3s">
+        <div class="text-sm text-white/60 mb-2">Enterprise</div>
+        <div class="font-display text-4xl font-bold glow-text mb-1">Custom</div>
+        <p class="text-xs text-white/50 mb-6">For organisations that need dedicated AI infrastructure.</p>
+        <ul class="space-y-3 text-sm text-white/70 mb-8">
+          <li class="flex gap-2"><span class="check">✓</span> Unlimited workflows</li>
+          <li class="flex gap-2"><span class="check">✓</span> On-prem / private cloud</li>
+          <li class="flex gap-2"><span class="check">✓</span> Dedicated AI engineer</li>
+          <li class="flex gap-2"><span class="check">✓</span> Custom model training</li>
+          <li class="flex gap-2"><span class="check">✓</span> 24/7 white glove support</li>
+        </ul>
+        <button class="btn-outline w-full py-3 text-sm justify-center">Talk to sales →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FAQ ==================== -->
+<section id="faq" class="py-24 px-6 md:px-12 bg-dark">
+  <div class="max-w-3xl mx-auto text-center">
+    <p class="text-xs text-white/40 uppercase tracking-widest mb-3">FAQ</p>
+    <h2 class="font-display text-4xl font-bold mb-4">Questions, <span class="glow-text">answered</span></h2>
+    <p class="text-white/50 mb-14">Everything you need to know before you talk to us.</p>
+    <div class="text-left space-y-0 fade-up">
+      <div class="faq-item"><button class="faq-btn" onclick="toggleFaq(this)"><span>How long does a typical AI implementation take?</span><div class="faq-icon">+</div></button><div class="faq-content">Most implementations take between 4–12 weeks depending on complexity. A simple chatbot or workflow automation can be live in under a month, while enterprise-grade multi-system integrations typically take 8–12 weeks with iterative testing.</div></div>
+      <div class="faq-item"><button class="faq-btn" onclick="toggleFaq(this)"><span>Do you train models on our private data?</span><div class="faq-icon">+</div></button><div class="faq-content">Yes. We offer fully private fine-tuning pipelines where your data never leaves your environment. All data handling follows GDPR and SOC 2 practices, with optional on-premise deployment for regulated industries.</div></div>
+      <div class="faq-item"><button class="faq-btn" onclick="toggleFaq(this)"><span>Which channels can your AI agents operate on?</span><div class="faq-icon">+</div></button><div class="faq-content">Our agents work across web chat, WhatsApp, SMS, email, voice (IVR), and mobile apps. We also integrate natively with Zendesk, Salesforce, HubSpot, and any REST-based CRM or helpdesk.</div></div>
+      <div class="faq-item"><button class="faq-btn" onclick="toggleFaq(this)"><span>Can you integrate with our existing CRM and tools?</span><div class="faq-icon">+</div></button><div class="faq-content">Absolutely. We have pre-built connectors for the most popular platforms and can build custom integrations for any system with an API. Our team handles all configuration and testing end-to-end.</div></div>
+      <div class="faq-item"><button class="faq-btn" onclick="toggleFaq(this)"><span>What kind of support do you provide post-launch?</span><div class="faq-icon">+</div></button><div class="faq-content">All plans include post-launch support. Growth and Enterprise plans come with dedicated success managers, proactive monitoring, and regular model retraining to ensure your AI continues to improve over time.</div></div>
+      <div class="faq-item"><button class="faq-btn" onclick="toggleFaq(this)"><span>How do you measure ROI?</span><div class="faq-icon">+</div></button><div class="faq-content">We baseline key metrics before deployment — ticket volume, handle time, lead conversion, cost-per-interaction — then track them monthly. Most clients see measurable ROI within 60 days of going live.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== WHY CHOOSE ==================== -->
+<section class="py-24 px-6 md:px-12 bg-dark">
+  <div class="max-w-7xl mx-auto">
+    <div class="why-card p-10 md:p-14 grid md:grid-cols-2 gap-12 items-center fade-up">
+      <div>
+        <h2 class="font-display text-4xl font-bold mb-5">Why Choose <span class="glow-text">Vinsights?</span></h2>
+        <p class="text-white/60 leading-relaxed mb-6">With extensive experience in Generative AI and deep expertise in aligning technology with real business needs, Vinsights results in crafting customised, impactful solutions.</p>
+        <button class="btn-primary px-7 py-3 text-sm font-medium">Contact Us →</button>
+      </div>
+      <div class="grid grid-cols-2 gap-6">
+        <div class="text-center">
+          <div class="stat-num text-5xl font-bold glow-text mb-1" data-target="50" data-suffix="+">0</div>
+          <div class="text-xs text-white/50 mt-1">Team Members</div>
+        </div>
+        <div class="text-center">
+          <div class="stat-num text-5xl font-bold glow-text mb-1" data-target="100" data-suffix="%">0</div>
+          <div class="text-xs text-white/50 mt-1">Success Rate</div>
+        </div>
+        <div class="text-center">
+          <div class="stat-num text-5xl font-bold glow-text mb-1" data-target="50" data-suffix="+">0</div>
+          <div class="text-xs text-white/50 mt-1">Projects Complete</div>
+        </div>
+        <div class="text-center">
+          <div class="stat-num text-5xl font-bold glow-text mb-1" data-target="1200" data-suffix="+">0</div>
+          <div class="text-xs text-white/50 mt-1">Happy Clients</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CONTACT ==================== -->
+<section id="contact" class="py-24 px-6 md:px-12 bg-dark">
+  <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+    <div class="fade-left">
+      <p class="text-xs text-white/40 uppercase tracking-widest mb-3">Get In Touch</p>
+      <h2 class="font-display text-4xl font-bold mb-4">Let's build your <span class="glow-text">AI advantage</span></h2>
+      <p class="text-white/50 mb-10 leading-relaxed">Share a few details about your goals and our team will get back within 24 hours with a tailored plan.</p>
+      <div class="space-y-5 text-sm text-white/60">
+        <div class="flex items-center gap-3"><div class="icon-box w-9 h-9"><svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-purple-light"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div> hello@vinsights.ai</div>
+        <div class="flex items-center gap-3"><div class="icon-box w-9 h-9"><svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-purple-light"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg></div> +91 8086 1196</div>
+        <div class="flex items-center gap-3"><div class="icon-box w-9 h-9"><svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-purple-light"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div> Powered by Logic, Bangalore</div>
+      </div>
+    </div>
+    <div class="bg-card border border-white/8 rounded-2xl p-8 fade-right">
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <div><label class="text-xs text-white/50 mb-1.5 block">Your name*</label><input class="form-input" placeholder="John Doe" /></div>
+        <div><label class="text-xs text-white/50 mb-1.5 block">Business name*</label><input class="form-input" placeholder="Acme Inc." /></div>
+      </div>
+      <div class="mb-4"><label class="text-xs text-white/50 mb-1.5 block">Company</label><input class="form-input" placeholder="Acme Inc." /></div>
+      <div class="mb-4"><label class="text-xs text-white/50 mb-1.5 block">Phone no.</label><input class="form-input" placeholder="+91 98765 00000" /></div>
+      <div class="mb-6"><label class="text-xs text-white/50 mb-1.5 block">How can we help?</label><textarea class="form-input resize-none h-24" placeholder="Tell us about your project..."></textarea></div>
+      <button class="btn-primary w-full py-3.5 text-sm font-medium justify-center">Send Message →</button>
+      <p class="text-center text-xs text-white/30 mt-3">We typically respond within 24 hours</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="py-16 px-6 md:px-12">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid md:grid-cols-4 gap-10 mb-12">
+      <div>
+        <div class="flex items-center gap-2 font-display font-bold text-lg mb-4">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-purple to-purple-light flex items-center justify-center text-white text-sm font-bold">V</div>
+          VINSIGHTS
+        </div>
+        <p class="text-xs text-white/40 leading-relaxed mb-4">Zone number 1A, Aksaya park, 544 Sprint Tech Road, 4th Stage, 10th to 18th, Ramamurthy nagar, Bangalore</p>
+        <p class="text-xs text-white/40">Phone: +91 8086 11966</p>
+        <div class="flex gap-3 mt-4">
+          <a href="#" class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-purple/30 transition-all text-xs">f</a>
+          <a href="#" class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-purple/30 transition-all text-xs">in</a>
+          <a href="#" class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-purple/30 transition-all text-xs">X</a>
+          <a href="#" class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-purple/30 transition-all text-xs">▷</a>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-semibold text-white text-sm mb-4">Services</h4>
+        <ul class="space-y-2 text-xs text-white/40">
+          <li><a href="#" class="hover:text-white transition-colors">Conversational AI Development</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">AI Model Development</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">AI Consulting Services</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">AI Integration Services</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Deployment & Management</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Industry Solutions</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold text-white text-sm mb-4">Industries</h4>
+        <ul class="space-y-2 text-xs text-white/40">
+          <li><a href="#" class="hover:text-white transition-colors">Technology & Communication</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Manufacturing</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Healthcare & Wellness</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Finance & Banking</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Team & Hospitality</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Media & Entertainment</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Automotive</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold text-white text-sm mb-4">New Industries</h4>
+        <ul class="space-y-2 text-xs text-white/40">
+          <li><a href="#" class="hover:text-white transition-colors">Finance & Banking</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">E-commerce & Retail</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Defence Industry</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Energy Industry</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/30">
+      <span>© Copyright 2025 Vinsights. Powered by Kloqto Informatics.</span>
+      <span>Privacy Policy · Terms of Service</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ==================== SCRIPTS ==================== -->
+<script>
+// FAQ toggle
+function toggleFaq(btn) {
+  const content = btn.nextElementSibling;
+  const icon = btn.querySelector('.faq-icon');
+  const isOpen = content.classList.contains('open');
+  document.querySelectorAll('.faq-content').forEach(c => c.classList.remove('open'));
+  document.querySelectorAll('.faq-icon').forEach(i => i.classList.remove('open'));
+  if (!isOpen) { content.classList.add('open'); icon.classList.add('open'); }
+}
+
+// Counter animation
+function animateCounter(el) {
+  const target = parseInt(el.dataset.target);
+  const suffix = el.dataset.suffix || '%';
+  const duration = 1800;
+  const start = performance.now();
+  function update(now) {
+    const t = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - t, 3);
+    el.textContent = Math.round(eased * target) + suffix;
+    if (t < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+
+// Intersection Observer for scroll animations + counters
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      el.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+      if (el.dataset.target) animateCounter(el);
+      io.unobserve(el);
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.fade-up, .fade-left, .fade-right').forEach(el => io.observe(el));
+document.querySelectorAll('[data-target]').forEach(el => io.observe(el));
+
+// Nav scroll effect
+const nav = document.querySelector('nav');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 50) nav.style.background = 'rgba(13,11,20,0.95)';
+  else nav.style.background = 'rgba(13,11,20,0.8)';
+});
+</script>
+</body>
+</html>
